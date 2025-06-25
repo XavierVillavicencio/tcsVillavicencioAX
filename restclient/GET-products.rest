@@ -1,0 +1,13 @@
+### GET products
+
+GET http://localhost:3002/bp/products/ HTTP/1.1
+Content-Type: application/json
+
+### GET products exists
+
+GET http://localhost:3002/bp/products/verification/dos HTTP/1.1
+Content-Type: application/json
+
+### test 123
+GET http://localhost:3002/bp/products/verification/841958 HTTP/1.1
+Content-Type: application/json

@@ -1,0 +1,7 @@
+
+### POST
+DELETE http://localhost:3002/bp/products/dos HTTP/1.1
+
+### POST
+DELETE http://localhost:3002/bp/products/207 HTTP/1.1
+

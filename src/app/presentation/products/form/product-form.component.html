@@ -1,0 +1,30 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+        <label>Nombre</label>
+        <input type="text" class="form-control" formControlName="name" />
+    </div>
+
+    <div class="mb-3">
+        <label>Descripción</label>
+        <textarea class="form-control" formControlName="description"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label>Logo (URL)</label>
+        <input type="text" class="form-control" formControlName="logo" />
+    </div>
+
+    <div class="mb-3">
+        <label>Fecha de lanzamiento</label>
+        <input type="date" class="form-control" formControlName="date_release" />
+    </div>
+
+    <div class="mb-3">
+        <label>Fecha de revisión</label>
+        <input type="date" class="form-control" formControlName="date_revision" />
+    </div>
+
+    <button type="submit" class="btn btn-success" [disabled]="form.invalid">
+      {{ editing ? 'Actualizar' : 'Guardar' }}
+    </button>
+</form>

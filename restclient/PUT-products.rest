@@ -1,0 +1,12 @@
+
+### POST
+PUT http://localhost:3002/bp/products/3 HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Nombre actualizado",
+    "description": "Descripción producto",
+    "logo": "assets-1.png",
+    "date_release": "2025-01-01",
+    "date_revision": "2025-01-01"
+}

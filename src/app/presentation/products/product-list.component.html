@@ -1,0 +1,29 @@
+<div class="container">
+    <h2>Lista de Productos</h2>
+
+    <a routerLink="/products/create" class="btn btn-primary">+ Crear Producto</a>
+
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let product of products; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.description }}</td>
+                <td>
+                    <button (click)="goToEdit(product)" class="btn btn-warning btn-sm">Editar</button>
+                    <button (click)="onDeleteClick(product)" class="btn btn-sm btn-danger ms-2">Eliminar</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<app-confirm-delete-modal *ngIf="confirmingProduct" [productName]="confirmingProduct.name" (confirmed)="onConfirmDelete($event)"></app-confirm-delete-modal>
