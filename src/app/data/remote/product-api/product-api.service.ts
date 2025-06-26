@@ -1,11 +1,12 @@
 // infrastructure/product-api/product-api.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, firstValueFrom, lastValueFrom, map, of, retry, switchMap, take, throwError } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ProductRepository } from '../../../core/interfaces/product.repository'; // Path to the ProductRepository interface
 import { ProductModel } from '../../../core/models/product.model'; // Path to the ProductModel
 import { mapProductFromDTO } from './product.mapper';
 import { ProductListResponseDTO } from '../../../core/entities/product.entity';
+import { environment } from '../../../../environments/environment';
 
 /**
  * @file ProductApiService
@@ -25,7 +26,7 @@ import { ProductListResponseDTO } from '../../../core/entities/product.entity';
  */
 @Injectable({ providedIn: 'root' })
 export class ProductApiService implements ProductRepository {
-  private readonly baseUrl = '/bp/products';
+  private readonly baseUrl = environment.apiUrl;
   /**
    * Constructs an instance of ProductApiService.
    *
