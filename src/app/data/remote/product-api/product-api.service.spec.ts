@@ -1,9 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-
 import { ProductApiService } from './product-api.service';
 import { ProductListResponseDTO } from '../../../core/entities/product.entity';
-import { ProductModel } from '../../../core/models/product.model';
+
 
 describe('ProductApiService', () => {
   let service: ProductApiService;
@@ -42,38 +41,39 @@ describe('ProductApiService', () => {
   });
 
   afterEach(() => {
-    httpMock.verify(); // Asegura que no haya peticiones pendientes
+    httpMock.verify(); 
   });
 
-  it('debe obtener todos los productos correctamente', async () => {
-    const resultado = service.getAll();
-
+  it('debe obtener todos los productos correctamente', (done) => {
+    service.getAll().subscribe(productos => {
+      expect(productos.length).toBe(2);
+      expect(productos[0].id).toBe('123');
+      done();
+    });
+  
     const req = httpMock.expectOne('/bp/products');
     expect(req.request.method).toBe('GET');
     req.flush(mockResponse);
-
-    const productos = await resultado;
-    expect(productos.length).toBe(2);
-    expect(productos[0].id).toBe('1');
   });
+  
 
   it('debe enviar una solicitud DELETE al endpoint correcto', () => {
     const id = 'abc123';
   
     service.delete(id).subscribe(response => {
-      expect(response).toBeUndefined(); // porque el body es void
+      expect(response).toBeUndefined(); 
     });
   
     const req = httpMock.expectOne(`/bp/products/${id}`);
     expect(req.request.method).toBe('DELETE');
-    req.flush(null); // no hay body, así que mandamos null
+    req.flush(null); 
   });
   
   it('debe verificar si el ID existe', () => {
     const id = 'prod001';
   
     service.verify(id).subscribe(resultado => {
-      expect(resultado).toBeTrue(); // esperamos true en este caso
+      expect(resultado).toBeTrue(); 
     });
   
     const req = httpMock.expectOne(`/bp/products/verification/${id}`);

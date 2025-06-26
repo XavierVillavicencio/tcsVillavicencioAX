@@ -77,24 +77,20 @@ export class ProductListComponent implements OnInit {
     this.showFormModal = true;
   }
 
-  // ✏️ EDITAR PRODUCTO
   openEditModal(product: ProductModel): void {
     this.editingProduct = product;
     this.showFormModal = true;
   }
 
-  // ✅ CONFIRMAR ENVÍO
   onFormSubmitted(): void {
     this.showFormModal = false;
     this.loadProducts();
   }
 
-  // ❌ CANCELAR
   onFormCancelled(): void {
     this.showFormModal = false;
   }
 
-  // 🗑️ ELIMINAR
   onDeleteClick(product: ProductModel): void {
     this.confirmingProduct = product;
   }

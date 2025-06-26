@@ -98,6 +98,10 @@ main {
     z-index: 1000;
 }
 
+.overlay-white {
+    background: $color-white;
+}
+
 // Estilos para el modal
 .modal {
     background: $color-white;

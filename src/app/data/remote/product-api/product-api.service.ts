@@ -35,12 +35,11 @@ export class ProductApiService implements ProductRepository {
    */
   constructor(private http: HttpClient) {}
 
-  /**
-   * Implements the `getAll` method from the `ProductRepository` interface.
-   * Fetches all product data from a specified API endpoint.
+   /**
+   * Obtiene todos los productos desde la API.
+   * Utiliza HttpClient para realizar un GET al endpoint correspondiente.
    *
-   * @returns {Promise<ProductModel[]>} A Promise that resolves with an array of `ProductModel` objects.
-   * It converts the HttpClient's Observable to a Promise, as defined by the repository interface.
+   * @returns Un observable con un array de ProductModel
    */
   getAll(): Observable<ProductModel[]> {
     return this.http.get<ProductListResponseDTO>(this.baseUrl, {
@@ -53,7 +52,12 @@ export class ProductApiService implements ProductRepository {
       map(response => response.body?.data.map(mapProductFromDTO) ?? [])
     );
   }
-  
+   /**
+   * Envía un nuevo producto al backend para ser creado.
+   *
+   * @param product - Instancia de ProductModel a crear.
+   * @returns Observable que resuelve en void cuando termina correctamente.
+   */
   create(product: ProductModel): Observable<void> {
     return this.http.post<void>(this.baseUrl, product, {
       headers: {
@@ -66,7 +70,12 @@ export class ProductApiService implements ProductRepository {
     );
   }
   
-
+  /**
+   * Actualiza un producto existente en el backend.
+   *
+   * @param product - Instancia con los datos actualizados.
+   * @returns Observable que resuelve en void.
+   */
   update(product: ProductModel): Observable<void> {
     console.info('llegamos por aqui');
     return this.http.put<{ data: ProductModel }>(`${this.baseUrl}/${product.id}`, product, {
@@ -84,13 +93,24 @@ export class ProductApiService implements ProductRepository {
     );
   }
   
-
+ /**
+   * Elimina un producto dado su ID.
+   *
+   * @param id - ID del producto a eliminar.
+   * @returns Observable que indica la finalización.
+   */
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`, {
       headers: { 'Content-Type': 'application/json' }
     });
   }
 
+   /**
+   * Verifica si un producto con cierto ID ya existe o está disponible.
+   *
+   * @param id - ID del producto a verificar.
+   * @returns Observable con valor booleano (true si es válido).
+   */
   verify(id: string): Observable<boolean> {
     return this.http.get<boolean>(`${this.baseUrl}/verification/${id}`, {
       headers: { 'Content-Type': 'application/json' }
