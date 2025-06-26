@@ -42,40 +42,48 @@ export class ProductApiService implements ProductRepository {
    * @returns {Promise<ProductModel[]>} A Promise that resolves with an array of `ProductModel` objects.
    * It converts the HttpClient's Observable to a Promise, as defined by the repository interface.
    */
-  async getAll(): Promise<ProductModel[]> {
-    const response = await firstValueFrom(this.http.get<ProductListResponseDTO>(this.baseUrl, {
+  getAll(): Observable<ProductModel[]> {
+    return this.http.get<ProductListResponseDTO>(this.baseUrl, {
       headers: {
         'Content-Type': 'application/json',
       },
       observe: 'response',
       responseType: 'json',
-    }));
-    const model = response.body?.data.map(mapProductFromDTO);
-    console.debug({ model });
-    return model ?? [];
-  }
-
-  async create(product: ProductModel): Promise<void> {
-    const response = await firstValueFrom(
-      this.http.post<void>(this.baseUrl, product, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        observe: 'response',
-        responseType: 'json'
-      })
+    }).pipe(
+      map(response => response.body?.data.map(mapProductFromDTO) ?? [])
     );
-    
-    // Si quieres inspeccionar el status o headers
-    console.debug('Status:', response.status);
-    console.debug('Headers:', response.headers);
-    
-    return; // o response.body si esperas algo    
   }
+  
+  create(product: ProductModel): Observable<void> {
+    return this.http.post<void>(this.baseUrl, product, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      observe: 'response',
+      responseType: 'json'
+    }).pipe(
+      map(() => void 0)
+    );
+  }
+  
 
   update(product: ProductModel): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/${product.id}`, product);
+    console.info('llegamos por aqui');
+    return this.http.put<{ data: ProductModel }>(`${this.baseUrl}/${product.id}`, product, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      observe: 'response',
+      responseType: 'json',
+    }).pipe(
+      map(response => {
+        const updatedProduct = mapProductFromDTO(response.body?.data);
+        console.info('Producto actualizado:', updatedProduct);
+        return void 0; // Porque el método declara Observable<void>
+      })
+    );
   }
+  
 
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`, {

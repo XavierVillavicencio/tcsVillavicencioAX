@@ -58,7 +58,7 @@ describe('ProductApiService', () => {
   });
 
   it('debe enviar una solicitud DELETE al endpoint correcto', () => {
-    const id = '123';
+    const id = 'abc123';
   
     service.delete(id).subscribe(response => {
       expect(response).toBeUndefined(); // porque el body es void

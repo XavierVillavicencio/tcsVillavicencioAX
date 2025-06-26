@@ -2,6 +2,7 @@
 $color-bg-body: #f4f6f9;
 $color-white: #ffffff;
 $color-black-transparent: rgba(0, 0, 0, 0.5);
+$color-black: rgba(0, 0, 0, 1);
 $color-border: #ced4da;
 $color-border-light: #dee2e6;
 $color-border-strong: #ddd;
@@ -25,41 +26,95 @@ $color-btn-warning: #ffff00;
 $color-btn-warning-hover: #ffff3d;
 $color-btn-warning-disabled: #ffffea;
 $color-select-bg: #f8f9fa;
+$color-border-context: #ccc;
+$color-background-li: #f1f1f1;
+$color-background-li-hover: #eee;
+$color-text-select-form: #495057;
+// Estilos globales para el host
 :host {
     display: block;
     background-color: $color-bg-body;
     min-height: 100vh;
+    font-family: 'Segoe UI', Sans-serif;
 }
 
+main {
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    box-sizing: inherit;
+    position: relative;
+}
+
+.content {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 1024px;
+    margin-bottom: 3rem;
+}
+
+.content h1 {
+    margin-top: 1.75rem;
+}
+
+.content p {
+    margin-top: 1.5rem;
+}
+
+.divider {
+    width: 1px;
+    background: var(--red-to-pink-to-purple-vertical-gradient);
+    margin-inline: 0.5rem;
+}
+
+@media screen and (max-width: 650px) {
+    .content {
+        flex-direction: column;
+        width: max-content;
+    }
+    .divider {
+        height: 1px;
+        width: 100%;
+        background: var(--red-to-pink-to-purple-horizontal-gradient);
+        margin-block: 1.5rem;
+    }
+}
+
+// Superposición (overlay) para modales
 .overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
+    background: $color-black-transparent;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
 }
 
+// Estilos para el modal
 .modal {
-    background: #fff;
+    background: $color-white;
     padding: 1.5rem;
     border-radius: 8px;
     min-width: 300px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 24px $color-shadow;
     animation: fadeIn 0.2s ease-in-out;
 }
 
-.buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    margin-top: 1rem;
+// Cuerpo del modal
+.modal-body {
+    padding: 25px 10px;
+    border-bottom: 2px solid $color-border-strong;
 }
 
+// Animación de aparición para el modal
 @keyframes fadeIn {
     from {
         transform: scale(0.95);
@@ -71,27 +126,52 @@ $color-select-bg: #f8f9fa;
     }
 }
 
+// Título del formulario dentro del modal
 .form-title {
     text-align: center;
     font-size: 22px;
     margin-bottom: 1rem;
     font-weight: bold;
-    color: #333;
+    color: $color-title;
 }
 
+// Estilos para inputs, textareas y selects
+input,
+textarea,
+select {
+    padding: 8px 12px;
+    border: 1px solid $color-border;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    &:focus {
+        border-color: $color-input-border-focus;
+        outline: none;
+        box-shadow: 0 0 0 0.15rem $color-input-focus;
+    }
+    // Estilos para campos inválidos y tocados (Angular specific)
+    &.ng-invalid.ng-touched {
+        border-color: $color-invalid;
+        box-shadow: 0 0 0 0.15rem $color-invalid-shadow;
+    }
+}
+
+// Sobreescritura para campos inválidos específicos (mantiene !important donde es necesario)
 input.ng-invalid.ng-touched,
 textarea.ng-invalid.ng-touched,
 select.ng-invalid.ng-touched {
     border: 1px solid $color-invalid !important;
-    box-shadow: 0 0 0 0.1rem rgba(220, 53, 69, 0.25);
+    box-shadow: 0 0 0 0.1rem $color-invalid-shadow;
 }
 
+// Texto de error
 .text-danger {
     color: $color-invalid;
     font-size: 13px;
     margin-top: 4px;
 }
 
+// Formulario dentro del modal
 .modal form {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -104,25 +184,7 @@ select.ng-invalid.ng-touched {
         label {
             font-weight: 600;
             margin-bottom: 4px;
-            color: #333;
-        }
-        input,
-        textarea,
-        select {
-            padding: 8px 12px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 14px;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            &:focus {
-                border-color: #6c63ff;
-                outline: none;
-                box-shadow: 0 0 0 0.15rem rgba(108, 99, 255, 0.25);
-            }
-            &.ng-invalid.ng-touched {
-                border-color: $color-invalid;
-                box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.2);
-            }
+            color: $color-title;
         }
     }
     .form-actions {
@@ -134,92 +196,11 @@ select.ng-invalid.ng-touched {
     }
 }
 
+// Estilos base para todos los botones (consolidado y con padding ajustado)
 button {
-    background-color: #f1f3f5;
+    background-color: $color-btn-default;
     border: none;
-    padding: 12px 24px;
-    margin-right: 6px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.2s ease;
-}
-
-button:hover {
-    background-color: #e2e6ea;
-}
-
-button.btn-danger {
-    background-color: #ffcaca;
-    color: #a30000;
-}
-
-button.btn-danger:hover {
-    background-color: #ffb3b3;
-}
-
-button.btn-warning {
-    color: #000;
-    background-color: #ffff00;
-}
-
-button.btn-warning:hover {
-    background-color: #ffff3d;
-}
-
-button.btn-warning:disabled {
-    background-color: #ffffea;
-}
-
-.modal-body {
-    padding: 5px 10px;
-    border-bottom: 2px solid #ddd;
-}
-
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal {
-    background: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    min-width: 300px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.2s ease-in-out;
-}
-
-.buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
-
-@keyframes fadeIn {
-    from {
-        transform: scale(0.95);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-button {
-    background-color: #f1f3f5;
-    border: none;
-    padding: 18px 24px;
+    padding: 18px 12px;
     margin-right: 6px;
     border-radius: 4px;
     cursor: pointer;
@@ -229,121 +210,106 @@ button {
 }
 
 button:hover {
-    background-color: #e2e6ea;
+    background-color: $color-btn-hover;
 }
 
+// Botones de acción general (como en el modal)
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+// Botones de peligro
 button.btn-danger {
-    background-color: #ffcaca;
-    color: #a30000;
+    background-color: $color-btn-danger;
+    color: $color-btn-danger-text;
 }
 
 button.btn-danger:hover {
-    background-color: #ffb3b3;
+    background-color: $color-btn-danger-hover;
 }
 
+// Botones de advertencia
 button.btn-warning {
-    color: #000;
-    background-color: #ffff00;
+    color: $color-black;
+    background-color: $color-btn-warning;
 }
 
 button.btn-warning:hover {
-    background-color: #ffff3d;
+    background-color: $color-btn-warning-hover;
 }
 
 button.btn-warning:disabled {
-    background-color: #ffffea;
+    background-color: $color-btn-warning-disabled;
 }
 
-.modal-body {
-    padding: 25px 10px;
-    border-bottom: 2px solid #ddd;
-}
-
+// Estilos de tabla
 table {
     width: 100%;
     border-collapse: collapse;
     border-spacing: 0 12px;
-    font-family: 'Segoe UI', sans-serif;
     thead th {
-        background-color: #eeeeee;
+        background-color: $color-table-hover;
         padding: 12px;
-        text-align: left;
-        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+        border-bottom: 2px solid $color-border-light;
         font-size: 15px;
-        color: #333;
+        color: $color-title;
     }
     tbody tr {
         background: $color-white;
     }
     tbody tr:hover {
-        background: #eeeeee;
+        background: $color-table-hover;
     }
     td {
+        margin: 15px;
         padding: 14px 12px;
-        vertical-align: top;
-        border-bottom: 1px solid #f0f0f0;
+        vertical-align: middle;
+        border-bottom: 1px solid $color-background-li;
     }
     tfoot {
         margin-top: 16px;
         font-size: 14px;
-        color: #666;
+        color: $color-muted;
         td {
             padding: 16px 12px;
-            background-color: #f9fafc;
-            border-top: 2px solid #dee2e6;
+            background-color: $color-table-footer;
+            border-top: 2px solid $color-border-light;
         }
     }
 }
 
-button {
-    background-color: #f1f3f5;
-    border: none;
-    padding: 6px 12px;
-    margin-right: 6px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.2s ease;
-}
-
-button:hover {
-    background-color: #e2e6ea;
-}
-
-button.btn-danger {
-    background-color: #ffcaca;
-    color: #a30000;
-}
-
-button.btn-danger:hover {
-    background-color: #ffb3b3;
-}
-
+// Caja de búsqueda del formulario
 .formSearchBox {
     max-width: 300px;
-    margin-bottom: 12px
+    margin-bottom: 12px;
 }
 
+// Estilos para el select con clase form-select
 select.form-select {
     padding: 6px 12px;
-    border: 1px solid #ced4da;
+    border: 1px solid $color-border;
     border-radius: 4px;
-    background-color: #f8f9fa;
+    background-color: $color-select-bg;
     font-size: 14px;
-    color: #495057;
+    color: $color-text-select-form;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     outline: none;
     cursor: pointer;
     appearance: none;
     &:hover {
-        background-color: #f1f3f5;
+        background-color: $color-btn-default;
     }
     &:focus {
-        border-color: #6c63ff;
-        box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.2);
+        border-color: $color-input-border-focus;
+        box-shadow: 0 0 0 2px $color-input-focus;
     }
 }
 
+// Barra de encabezado
 .header-bar {
     display: flex;
     flex-direction: column;
@@ -356,7 +322,7 @@ select.form-select {
         font-weight: bold;
         font-size: 24px;
         gap: 0.5rem;
-        color: #2d2f3a;
+        color: $color-black;
     }
     .actions {
         display: flex;
@@ -372,58 +338,47 @@ select.form-select {
     }
 }
 
+// Iconos de título
 .icon-title {
     width: 28px;
     height: 28px;
 }
 
+.icon-td {
+    width: 12px;
+    height: 12px;
+}
+
 .icon-title-logo {
-    background-color: #c8cedc;
-    border-radius: 25px;
-    padding: 15px 20px; // Para que el fondo se vea alrededor de la imagen
+    background-color: $color-icon-bg;
+    border-radius: 50px;
+    padding: 20px;
+    margin: 3px;
 }
 
-input,
-textarea,
-select {
-    padding: 8px 12px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    font-size: 14px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    &:focus {
-        border-color: #6c63ff;
-        outline: none;
-        box-shadow: 0 0 0 0.15rem rgba(108, 99, 255, 0.25);
-    }
-    &.ng-invalid.ng-touched {
-        border-color: $color-invalid;
-        box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.2);
-    }
-}
-
+// Menú contextual
 .context-menu {
     position: absolute;
     top: 1.5rem;
     right: 0;
     background: $color-white;
-    border: 1px solid #ccc;
+    border: 1px solid $color-border-context;
     border-radius: 4px;
     list-style: none;
     padding: 0;
     margin: 0;
     width: 100px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 6px $color-shadow-light;
     z-index: 10;
     li {
         padding: 8px 12px;
         cursor: pointer;
         font-size: 14px;
         &:hover {
-            background-color: #f1f1f1;
+            background-color: $color-background-li;
         }
         &:first-child {
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid $color-background-li-hover;
         }
     }
 }
@@ -431,4 +386,13 @@ select {
 .context-menu-container {
     position: relative;
     cursor: pointer;
+}
+
+.fallback-logo {
+    display: none;
+}
+
+.wrapper {
+    background: $color-white;
+    padding: 2rem;
 }

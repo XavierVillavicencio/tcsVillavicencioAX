@@ -3,15 +3,12 @@ import { GetAllProducts } from '../../core/use-cases/get-all-products';
 import { DeleteProductUseCase } from '../../core/use-cases/delete-product.usecase';
 import { ProductApiService } from '../../data/remote/product-api/product-api.service';
 import { ProductModel } from '../../core/models/product.model';
-import { ProductStateService } from '../../data/local/product-service/product-state.service';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 import { ConfirmDeleteModalComponent } from './modal/confirm-delete-modal.component';
 import { ProductFormModalComponent } from './form/product-form.component';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { debounceTime, startWith, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-product-list',
@@ -43,9 +40,7 @@ export class ProductListComponent implements OnInit {
   private deleteProductUseCase: DeleteProductUseCase;
 
   constructor(
-    private productApi: ProductApiService,
-    private router: Router,
-    private productStateService: ProductStateService
+    private productApi: ProductApiService
   ) {
     this.getAllProducts = new GetAllProducts(this.productApi);
     this.deleteProductUseCase = new DeleteProductUseCase(this.productApi);
@@ -53,7 +48,6 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit() {
     this.loadProducts();
-
     this.filteredProducts$ = combineLatest([
   this.products$,
   this.searchControl.valueChanges.pipe(startWith(''), debounceTime(300))
@@ -70,11 +64,12 @@ export class ProductListComponent implements OnInit {
 );  
   }
 
-  loadProducts() {
-    this.getAllProducts.execute().then((p) => {
-      this.products$.next(p);
+  loadProducts(): void {
+    this.getAllProducts.execute().subscribe(products => {
+      this.products$.next(products);
     });
   }
+  
 
   // 🚀 CREAR PRODUCTO
   openCreateModal(): void {
@@ -125,11 +120,13 @@ export class ProductListComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-
-    // Si el clic NO ocurrió dentro de un elemento del menú, lo cerramos
     if (!target.closest('.action-menu-cell')) {
       this.openedMenuId = null;
     }
   }
 
+  logoFallback(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.classList.add('fallback-logo');
+  }
 }

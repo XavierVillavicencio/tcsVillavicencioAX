@@ -1,5 +1,5 @@
 import { FormControl } from '@angular/forms';
-import { todayValidator } from './custom-validators';
+import { todayValidator, urlValidator } from './custom-validators';
 
 describe('todayValidator', () => {
   const validator = todayValidator();
@@ -31,3 +31,24 @@ describe('todayValidator', () => {
     expect(validator(control)).toBeNull();
   });
 });
+
+describe('urlValidator', () => {
+    it('debería permitir una URL válida', () => {
+      const control = new FormControl('https://example.com');
+      const result = urlValidator()(control);
+      expect(result).toBeNull();
+    });
+  
+    it('debería marcar error si la URL es inválida', () => {
+      const control = new FormControl('notaurl');
+      const result = urlValidator()(control);
+      expect(result).toEqual({ invalidUrl: true });
+    });
+  
+    it('debería permitir campo vacío (deja que required lo valide)', () => {
+      const control = new FormControl('');
+      const result = urlValidator()(control);
+      expect(result).toBeNull();
+    });
+  });
+

@@ -12,3 +12,16 @@ export function todayValidator(): ValidatorFn {
     return inputDate >= today ? null : { fechaPasada: true };
   };
 }
+
+export function urlValidator(): (control: AbstractControl) => ValidationErrors | null {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value?.trim();
+      if (!value) return null;
+      try {
+        new URL(value); // Esto lanza error si no es URL válida
+        return null;
+      } catch (_) {
+        return { invalidUrl: true };
+      }
+    };
+  }

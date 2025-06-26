@@ -17,8 +17,8 @@ export interface ProductRepository {
    * Retrieves all product records.
    * @returns {Promise<ProductModel[]>} A promise that resolves with an array of ProductModel objects.
    */
-  getAll(): Promise<ProductModel[]>;
-  create(product: ProductModel): Promise<void>;
+  getAll(): Observable<ProductModel[]>;
+  create(product: ProductModel): Observable<void>;
   update(product: ProductModel): Observable<void>;
   delete(id: string): Observable<void>;
   verify(id: string): Observable<boolean>;

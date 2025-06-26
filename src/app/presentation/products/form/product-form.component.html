@@ -43,6 +43,9 @@
                 <input type="text" class="form-control" formControlName="logo" />
                 <div *ngIf="form.get('logo')?.touched && form.get('logo')?.invalid" class="text-danger">
                     <small *ngIf="form.get('logo')?.hasError('required')">Logo es requerido.</small>
+                    <small *ngIf="form.get('logo')?.hasError('invalidUrl')">
+                        Debe ser una URL válida (ej: http://localhost:4200/assets/icons/Logo1.svg).
+                    </small>
                 </div>
             </div>
 

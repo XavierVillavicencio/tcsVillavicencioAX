@@ -3,58 +3,62 @@
         <img src="assets/icons/money.svg" alt="Banco icon" class="icon-title" /> BANCO
     </h2>
     <div class="actions">
-        <input [formControl]="searchControl" placeholder="Buscar" class="form-control search-box" />
+        <input [formControl]="searchControl" placeholder="Search" class="form-control search-box" />
 
-        <button class="btn btn-primary create-btn" (click)="openCreateModal()">
+        <button class="btn btn-warning create-btn" (click)="openCreateModal()">
         Agregar
         </button>
     </div>
 </div>
-<table>
-    <thead>
-        <tr>
-            <th>Logo</th>
-            <th>Nombre del producto</th>
-            <th>Descripción</th>
-            <th>Fecha de liberación</th>
-            <th>Fecha de reestructuración</th>
-            <th>&nbsp;</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let product of (filteredProducts$ | async)?.slice(0, itemsPerPage)">
-            <td><img src="{{ product.logo }}" alt="Logo" class="icon-title icon-title-logo" /></td>
-            <td>{{ product.name }}</td>
-            <td>{{ product.description }}</td>
-            <td>{{ product.date_release | date: 'MM/dd/yyyy' }}</td>
-            <td>{{ product.date_revision | date: 'MM/dd/yyyy' }}</td>
-            <td class="action-menu-cell">
-                <div class="context-menu-container" (click)="toggleMenu(product.id)">
-                    ⋮
-                    <ul *ngIf="openedMenuId === product.id" class="context-menu">
-                        <li (click)="openEditModal(product)">Editar</li>
-                        <li (click)="onDeleteClick(product)">Eliminar</li>
-                    </ul>
-                </div>
-            </td>
-        </tr>
-    </tbody>
-    <tfoot>
-        <tr>
-            <td colspan="5">
-                Mostrando {{ filteredCount > itemsPerPage ? itemsPerPage : filteredCount }} de {{ filteredCount }} resultado{{ filteredCount === 1 ? '' : 's' }}
-            </td>
-            <td>
-                <select [(ngModel)]="itemsPerPage" class="form-select" style="width: auto">
-                  <option [value]="5">5</option>
-                  <option [value]="10">10</option>
-                  <option [value]="20">20</option>
-                </select>
-            </td>
-        </tr>
-    </tfoot>
-</table>
+<div class="wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Logo</th>
+                <th>Nombre del producto</th>
+                <th>Descripción <img src="assets/icons/exclamation-circle.svg" alt="exclamation-circle" class="icon-td" /></th>
+                <th>Fecha de liberación <img src="assets/icons/exclamation-circle.svg" alt="exclamation-circle" class="icon-td" /></th>
+                <th>Fecha de reestructuración <img src="assets/icons/exclamation-circle.svg" alt="exclamation-circle" class="icon-td" /></th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let product of (filteredProducts$ | async)?.slice(0, itemsPerPage)">
+                <td>
+                    <img src="{{ product.logo }}" alt="Logo" class="icon-title icon-title-logo" (error)="logoFallback($event)" />
+                </td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.description }}</td>
+                <td>{{ product.date_release | date: 'MM/dd/yyyy' }}</td>
+                <td>{{ product.date_revision | date: 'MM/dd/yyyy' }}</td>
+                <td class="action-menu-cell">
+                    <div class="context-menu-container" (click)="toggleMenu(product.id)">
+                        ⋮
+                        <ul *ngIf="openedMenuId === product.id" class="context-menu">
+                            <li (click)="openEditModal(product)">Editar</li>
+                            <li (click)="onDeleteClick(product)">Eliminar</li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5">
+                    Mostrando {{ filteredCount > itemsPerPage ? itemsPerPage : filteredCount }} de {{ filteredCount }} resultado{{ filteredCount === 1 ? '' : 's' }}
+                </td>
+                <td>
+                    <select [(ngModel)]="itemsPerPage" class="form-select" style="width: auto">
+                      <option [value]="5">5</option>
+                      <option [value]="10">10</option>
+                      <option [value]="20">20</option>
+                    </select>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
 
+</div>
 <app-confirm-delete-modal *ngIf="confirmingProduct" [productName]="confirmingProduct.name" (confirmed)="onConfirmDelete($event)">
 </app-confirm-delete-modal>
 
