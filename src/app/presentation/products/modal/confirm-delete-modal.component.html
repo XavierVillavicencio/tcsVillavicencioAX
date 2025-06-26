@@ -1,9 +1,11 @@
 <div class="overlay">
     <div class="modal">
-        <p>¿Estás seguro que deseas eliminar <strong>{{ productName }}</strong>?</p>
+        <div class="modal-body">
+            <p>¿Estás seguro que deseas eliminar <strong>{{ productName }}</strong>?</p>
+        </div>
         <div class="buttons">
-            <button (click)="confirm()" class="btn btn-danger">Sí, eliminar</button>
             <button (click)="cancel()" class="btn btn-secondary">Cancelar</button>
+            <button (click)="confirm()" class="btn btn-warning">Confirmar</button>
         </div>
     </div>
 </div>

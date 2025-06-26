@@ -1,30 +1,80 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="mb-3">
-        <label>Nombre</label>
-        <input type="text" class="form-control" formControlName="name" />
-    </div>
+<div class="overlay">
+    <div class="modal">
+        <div class="modal-body">
+            <h2 class="form-title">FORMULARIO DE REGISTRO</h2>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-    <div class="mb-3">
-        <label>Descripción</label>
-        <textarea class="form-control" formControlName="description"></textarea>
-    </div>
+            <div class="mb-3">
+                <label>ID</label>
+                <input type="text" formControlName="id" />
+                <div *ngIf="form.get('id')?.touched && form.get('id')?.invalid" class="text-danger">
+                    <small *ngIf="form.get('id')?.hasError('required')">El ID es requerido.</small>
+                    <small *ngIf="form.get('id')?.hasError('minlength')">Debe tener al menos 3 caracteres.</small>
+                    <small *ngIf="form.get('id')?.hasError('maxlength')">No puede tener más de 10 caracteres.</small>
+                    <small *ngIf="form.get('id')?.hasError('idDuplicado')">Este ID ya existe.</small>
+                </div>
 
-    <div class="mb-3">
-        <label>Logo (URL)</label>
-        <input type="text" class="form-control" formControlName="logo" />
-    </div>
+            </div>
 
-    <div class="mb-3">
-        <label>Fecha de lanzamiento</label>
-        <input type="date" class="form-control" formControlName="date_release" />
-    </div>
+            <div class="mb-3">
+                <label>Nombre</label>
+                <input type="text" formControlName="name" class="form-control" />
+                <div *ngIf="form.get('name')?.touched && form.get('name')?.invalid" class="text-danger">
+                    <small *ngIf="form.get('name')?.hasError('required')">El nombre es obligatorio.</small>
+                    <small *ngIf="form.get('name')?.hasError('minlength')">Debe tener mínimo 5 caracteres.</small>
+                    <small *ngIf="form.get('name')?.hasError('maxlength')">No puede tener más de 100 caracteres.</small>
+                </div>
 
-    <div class="mb-3">
-        <label>Fecha de revisión</label>
-        <input type="date" class="form-control" formControlName="date_revision" />
-    </div>
+            </div>
 
-    <button type="submit" class="btn btn-success" [disabled]="form.invalid">
-      {{ editing ? 'Actualizar' : 'Guardar' }}
-    </button>
-</form>
+            <div class="mb-3">
+                <label>Descripción</label>
+                <textarea class="form-control" formControlName="description"></textarea>
+                <div *ngIf="form.get('description')?.touched && form.get('description')?.invalid" class="text-danger">
+                    <small *ngIf="form.get('description')?.hasError('required')">Descripción es obligatorio.</small>
+                    <small *ngIf="form.get('description')?.hasError('minlength')">Debe tener mínimo 10 caracteres.</small>
+                    <small *ngIf="form.get('description')?.hasError('maxlength')">No puede tener más de 200 caracteres.</small>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label>Logo</label>
+                <input type="text" class="form-control" formControlName="logo" />
+                <div *ngIf="form.get('logo')?.touched && form.get('logo')?.invalid" class="text-danger">
+                    <small *ngIf="form.get('logo')?.hasError('required')">Logo es requerido.</small>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label>Fecha Liberación</label>
+                <input type="date" class="form-control" formControlName="date_release" />
+                <div *ngIf="form.get('date_release')?.touched && form.get('date_release')?.invalid" class="text-danger">
+                    <small *ngIf="form.get('date_release')?.hasError('required')">
+                      La fecha de liberación es obligatoria.
+                    </small>
+                    <small *ngIf="form.get('date_release')?.hasError('fechaPasada')">
+                      Debe ser hoy o superior.
+                    </small>
+                </div>
+
+            </div>
+
+            <div class="mb-3">
+                <label>Fecha Revisión</label>
+                <input type="date" formControlName="date_revision" readonly/>
+                <div *ngIf="form.get('date_revision')?.touched && form.get('date_revision')?.hasError('revisionIncorrecta')" class="text-danger">
+                    <small>La fecha debe ser exactamente un año después de la fecha de liberación.</small>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" (click)="onCancel()">Reiniciar</button>
+                <button type="submit" class="btn btn-warning" [disabled]="form.invalid">
+                    Enviar
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>

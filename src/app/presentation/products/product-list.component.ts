@@ -1,46 +1,104 @@
-// ui/pages/products/product-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { GetAllProducts } from '../../core/use-cases/get-all-products';
 import { DeleteProductUseCase } from '../../core/use-cases/delete-product.usecase';
 import { ProductApiService } from '../../data/remote/product-api/product-api.service';
 import { ProductModel } from '../../core/models/product.model';
-import { ProductStateService } from '../../data/local/product-service/product-state.service'
-import { RouterLink  } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ProductStateService } from '../../data/local/product-service/product-state.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ConfirmDeleteModalComponent } from './modal/confirm-delete-modal.component';
+import { ProductFormModalComponent } from './form/product-form.component';
+import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { debounceTime, startWith, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
+  styleUrls: ['./product-list.component.scss'],
   standalone: true,
-  imports: [ConfirmDeleteModalComponent, CommonModule, ReactiveFormsModule, RouterLink ],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ConfirmDeleteModalComponent,
+    ProductFormModalComponent,
+    FormsModule
+  ]
 })
 export class ProductListComponent implements OnInit {
-  products:ProductModel[] = [];
+  products: ProductModel[] = [];
+  confirmingProduct: ProductModel | null = null;
+  editingProduct: ProductModel | null = null;
+  showFormModal = false;
+  searchControl = new FormControl('');
+  filteredCount = 0;
+  itemsPerPage = 5;
+
+  private products$ = new BehaviorSubject<ProductModel[]>([]);
+  filteredProducts$!: Observable<ProductModel[]>;
+
   private getAllProducts: GetAllProducts;
   private deleteProductUseCase: DeleteProductUseCase;
-  confirmingProduct: ProductModel | null = null;
 
   constructor(
-        private productApi: ProductApiService, 
-        private router: Router,
-        private productStateService: ProductStateService
+    private productApi: ProductApiService,
+    private router: Router,
+    private productStateService: ProductStateService
   ) {
     this.getAllProducts = new GetAllProducts(this.productApi);
     this.deleteProductUseCase = new DeleteProductUseCase(this.productApi);
   }
 
   ngOnInit() {
-    this.getAllProducts.execute().then(p => this.products = p);
+    this.loadProducts();
+
+    this.filteredProducts$ = combineLatest([
+  this.products$,
+  this.searchControl.valueChanges.pipe(startWith(''), debounceTime(300))
+]).pipe(
+  map(([products, term]) => {
+    const lowerTerm = (term ?? '').toLowerCase();
+    const filtered = products.filter(product =>
+      product.name.toLowerCase().includes(lowerTerm) ||
+      product.description.toLowerCase().includes(lowerTerm)
+    );
+    this.filteredCount = filtered.length;
+    return filtered;
+  })
+);  
   }
 
-  goToEdit(product: ProductModel): void {
-    this.productStateService.set(product);
-    this.router.navigate(['/products/edit', product.id]);
-  }  
+  loadProducts() {
+    this.getAllProducts.execute().then((p) => {
+      this.products$.next(p);
+    });
+  }
 
+  // 🚀 CREAR PRODUCTO
+  openCreateModal(): void {
+    this.editingProduct = null;
+    this.showFormModal = true;
+  }
+
+  // ✏️ EDITAR PRODUCTO
+  openEditModal(product: ProductModel): void {
+    this.editingProduct = product;
+    this.showFormModal = true;
+  }
+
+  // ✅ CONFIRMAR ENVÍO
+  onFormSubmitted(): void {
+    this.showFormModal = false;
+    this.loadProducts();
+  }
+
+  // ❌ CANCELAR
+  onFormCancelled(): void {
+    this.showFormModal = false;
+  }
+
+  // 🗑️ ELIMINAR
   onDeleteClick(product: ProductModel): void {
     this.confirmingProduct = product;
   }
@@ -49,10 +107,9 @@ export class ProductListComponent implements OnInit {
     if (confirmed && this.confirmingProduct) {
       const id = this.confirmingProduct.id;
       this.deleteProductUseCase.execute(id).subscribe(() => {
-        this.products = this.products.filter(p => p.id !== id);
-        console.log(`✅ Producto ${this.confirmingProduct?.name} eliminado`);
+        this.loadProducts();
       });
     }
-    this.confirmingProduct = null; // cerrar modal
+    this.confirmingProduct = null;
   }
 }

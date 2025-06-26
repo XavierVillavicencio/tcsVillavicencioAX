@@ -56,8 +56,6 @@ export class ProductApiService implements ProductRepository {
   }
 
   async create(product: ProductModel): Promise<void> {
-    const id = await firstValueFrom(this.generateUniqueProductId());
-    product.id = id.toString();
     const response = await firstValueFrom(
       this.http.post<void>(this.baseUrl, product, {
         headers: {
@@ -85,30 +83,9 @@ export class ProductApiService implements ProductRepository {
     });
   }
 
-  generateUniqueProductId(): Observable<number> {
-    return of(null).pipe(
-      map(() => Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000),
-      switchMap((newId) =>
-        this.http.get<void>(`${this.baseUrl}/verification/${newId}`, {}).pipe(
-          map(() => {
-            console.log(`✅ ID único encontrado: ${newId}`);
-            return newId;
-          }),
-          catchError((error) => {
-            if (error.status === 409) {
-              console.warn(`🚫 ID ${newId} ya existe. Intentando otro...`);
-              return throwError(() => new Error('ID exists'));
-            } else {
-              console.error(`💥 Error al verificar ID ${newId}:`, error);
-              return throwError(() => error);
-            }
-          })
-        )
-      ),
-      retry({ delay: 100 }), // reintenta con un pequeño delay
-      take(1) // salimos al primer ID válido
-    );
+  verify(id: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.baseUrl}/verification/${id}`, {
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
-  
-
 }

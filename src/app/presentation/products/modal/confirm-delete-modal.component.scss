@@ -37,3 +37,46 @@
         opacity: 1;
     }
 }
+
+button {
+    background-color: #f1f3f5;
+    border: none;
+    padding: 6px 12px;
+    margin-right: 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+    font-weight: 900;
+}
+
+button:hover {
+    background-color: #e2e6ea;
+}
+
+button.btn-danger {
+    background-color: #ffcaca;
+    color: #a30000;
+}
+
+button.btn-danger:hover {
+    background-color: #ffb3b3;
+}
+
+button.btn-warning {
+    color: #000;
+    background-color: #ffff00;
+}
+
+button.btn-warning:hover {
+    background-color: #ffff3d;
+}
+
+button.btn-warning:disabled {
+    background-color: #ffffea;
+}
+
+.modal-body {
+    padding: 25px 10px;
+    border-bottom: 2px solid #ddd;
+}

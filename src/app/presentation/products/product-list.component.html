@@ -1,29 +1,55 @@
-<div class="container">
-    <h2>Lista de Productos</h2>
+<div class="header-bar">
+    <h2 class="title">BANCO</h2>
+    <div class="actions">
+        <input [formControl]="searchControl" placeholder="Buscar" class="form-control search-box" />
 
-    <a routerLink="/products/create" class="btn btn-primary">+ Crear Producto</a>
-
-    <table class="table table-striped mt-3">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Nombre</th>
-                <th>Precio</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let product of products; let i = index">
-                <td>{{ i + 1 }}</td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.description }}</td>
-                <td>
-                    <button (click)="goToEdit(product)" class="btn btn-warning btn-sm">Editar</button>
-                    <button (click)="onDeleteClick(product)" class="btn btn-sm btn-danger ms-2">Eliminar</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+        <button class="btn btn-primary create-btn" (click)="openCreateModal()">
+        Nuevo producto
+        </button>
+    </div>
 </div>
+<table>
+    <thead>
+        <tr>
+            <th>Logo</th>
+            <th>Nombre del producto</th>
+            <th>Descripción</th>
+            <th>Fecha de liberación</th>
+            <th>Fecha de reestructuración</th>
+            <th>Opciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let product of (filteredProducts$ | async)?.slice(0, itemsPerPage)">
+            <td>{{ product.logo }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.description }}</td>
+            <td>{{ product.date_release | date: 'MM/dd/yyyy' }}</td>
+            <td>{{ product.date_revision | date: 'MM/dd/yyyy' }}</td>
+            <td>
+                <button (click)="openEditModal(product)">Editar</button>
+                <button class="btn-danger" (click)="onDeleteClick(product)">Eliminar</button>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5">
+                Mostrando {{ filteredCount > itemsPerPage ? itemsPerPage : filteredCount }} de {{ filteredCount }} resultado{{ filteredCount === 1 ? '' : 's' }}
+            </td>
+            <td>
+                <select [(ngModel)]="itemsPerPage" class="form-select" style="width: auto">
+                  <option [value]="5">5</option>
+                  <option [value]="10">10</option>
+                  <option [value]="20">20</option>
+                </select>
+            </td>
+        </tr>
+    </tfoot>
+</table>
 
-<app-confirm-delete-modal *ngIf="confirmingProduct" [productName]="confirmingProduct.name" (confirmed)="onConfirmDelete($event)"></app-confirm-delete-modal>
+<app-confirm-delete-modal *ngIf="confirmingProduct" [productName]="confirmingProduct.name" (confirmed)="onConfirmDelete($event)">
+</app-confirm-delete-modal>
+
+<app-product-form-modal *ngIf="showFormModal" [product]="editingProduct" (submitted)="onFormSubmitted()" (cancelled)="onFormCancelled()">
+</app-product-form-modal>

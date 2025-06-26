@@ -21,5 +21,5 @@ export interface ProductRepository {
   create(product: ProductModel): Promise<void>;
   update(product: ProductModel): Observable<void>;
   delete(id: string): Observable<void>;
-  generateUniqueProductId(): Observable<number>;
+  verify(id: string): Observable<boolean>;
 }
