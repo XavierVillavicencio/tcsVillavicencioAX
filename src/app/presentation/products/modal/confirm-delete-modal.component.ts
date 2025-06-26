@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './confirm-delete-modal.component.html',
-  styleUrls: ['./confirm-delete-modal.component.scss']
+  styleUrls: ['../../../app.component.scss'],
 })
 export class ConfirmDeleteModalComponent {
   @Input() productName!: string;

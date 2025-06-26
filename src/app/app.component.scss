@@ -1,0 +1,434 @@
+// === 🎨 PALETA DE COLORES ===
+$color-bg-body: #f4f6f9;
+$color-white: #ffffff;
+$color-black-transparent: rgba(0, 0, 0, 0.5);
+$color-border: #ced4da;
+$color-border-light: #dee2e6;
+$color-border-strong: #ddd;
+$color-shadow: rgba(0, 0, 0, 0.2);
+$color-shadow-light: rgba(0, 0, 0, 0.1);
+$color-title: #333;
+$color-muted: #666;
+$color-table-hover: #eeeeee;
+$color-table-footer: #f9fafc;
+$color-icon-bg: #c8cedc;
+$color-input-focus: rgba(108, 99, 255, 0.25);
+$color-input-border-focus: #6c63ff;
+$color-invalid: #dc3545;
+$color-invalid-shadow: rgba(220, 53, 69, 0.25);
+$color-btn-default: #f1f3f5;
+$color-btn-hover: #e2e6ea;
+$color-btn-danger: #ffcaca;
+$color-btn-danger-hover: #ffb3b3;
+$color-btn-danger-text: #a30000;
+$color-btn-warning: #ffff00;
+$color-btn-warning-hover: #ffff3d;
+$color-btn-warning-disabled: #ffffea;
+$color-select-bg: #f8f9fa;
+:host {
+    display: block;
+    background-color: $color-bg-body;
+    min-height: 100vh;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    min-width: 300px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+@keyframes fadeIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.form-title {
+    text-align: center;
+    font-size: 22px;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+input.ng-invalid.ng-touched,
+textarea.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+    border: 1px solid $color-invalid !important;
+    box-shadow: 0 0 0 0.1rem rgba(220, 53, 69, 0.25);
+}
+
+.text-danger {
+    color: $color-invalid;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.modal form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem 2rem;
+    padding: 1rem 0;
+    .mb-3 {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        label {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #333;
+        }
+        input,
+        textarea,
+        select {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            &:focus {
+                border-color: #6c63ff;
+                outline: none;
+                box-shadow: 0 0 0 0.15rem rgba(108, 99, 255, 0.25);
+            }
+            &.ng-invalid.ng-touched {
+                border-color: $color-invalid;
+                box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.2);
+            }
+        }
+    }
+    .form-actions {
+        grid-column: span 2;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+}
+
+button {
+    background-color: #f1f3f5;
+    border: none;
+    padding: 12px 24px;
+    margin-right: 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: #e2e6ea;
+}
+
+button.btn-danger {
+    background-color: #ffcaca;
+    color: #a30000;
+}
+
+button.btn-danger:hover {
+    background-color: #ffb3b3;
+}
+
+button.btn-warning {
+    color: #000;
+    background-color: #ffff00;
+}
+
+button.btn-warning:hover {
+    background-color: #ffff3d;
+}
+
+button.btn-warning:disabled {
+    background-color: #ffffea;
+}
+
+.modal-body {
+    padding: 5px 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    min-width: 300px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+@keyframes fadeIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+button {
+    background-color: #f1f3f5;
+    border: none;
+    padding: 18px 24px;
+    margin-right: 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+    font-weight: 900;
+}
+
+button:hover {
+    background-color: #e2e6ea;
+}
+
+button.btn-danger {
+    background-color: #ffcaca;
+    color: #a30000;
+}
+
+button.btn-danger:hover {
+    background-color: #ffb3b3;
+}
+
+button.btn-warning {
+    color: #000;
+    background-color: #ffff00;
+}
+
+button.btn-warning:hover {
+    background-color: #ffff3d;
+}
+
+button.btn-warning:disabled {
+    background-color: #ffffea;
+}
+
+.modal-body {
+    padding: 25px 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0 12px;
+    font-family: 'Segoe UI', sans-serif;
+    thead th {
+        background-color: #eeeeee;
+        padding: 12px;
+        text-align: left;
+        border-bottom: 2px solid #dee2e6;
+        font-size: 15px;
+        color: #333;
+    }
+    tbody tr {
+        background: $color-white;
+    }
+    tbody tr:hover {
+        background: #eeeeee;
+    }
+    td {
+        padding: 14px 12px;
+        vertical-align: top;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    tfoot {
+        margin-top: 16px;
+        font-size: 14px;
+        color: #666;
+        td {
+            padding: 16px 12px;
+            background-color: #f9fafc;
+            border-top: 2px solid #dee2e6;
+        }
+    }
+}
+
+button {
+    background-color: #f1f3f5;
+    border: none;
+    padding: 6px 12px;
+    margin-right: 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: #e2e6ea;
+}
+
+button.btn-danger {
+    background-color: #ffcaca;
+    color: #a30000;
+}
+
+button.btn-danger:hover {
+    background-color: #ffb3b3;
+}
+
+.formSearchBox {
+    max-width: 300px;
+    margin-bottom: 12px
+}
+
+select.form-select {
+    padding: 6px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    font-size: 14px;
+    color: #495057;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    &:hover {
+        background-color: #f1f3f5;
+    }
+    &:focus {
+        border-color: #6c63ff;
+        box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.2);
+    }
+}
+
+.header-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    .title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 24px;
+        gap: 0.5rem;
+        color: #2d2f3a;
+    }
+    .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .search-box {
+            max-width: 300px;
+            flex: 1;
+        }
+        .create-btn {
+            white-space: nowrap;
+        }
+    }
+}
+
+.icon-title {
+    width: 28px;
+    height: 28px;
+}
+
+.icon-title-logo {
+    background-color: #c8cedc;
+    border-radius: 25px;
+    padding: 15px 20px; // Para que el fondo se vea alrededor de la imagen
+}
+
+input,
+textarea,
+select {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    &:focus {
+        border-color: #6c63ff;
+        outline: none;
+        box-shadow: 0 0 0 0.15rem rgba(108, 99, 255, 0.25);
+    }
+    &.ng-invalid.ng-touched {
+        border-color: $color-invalid;
+        box-shadow: 0 0 0 0.15rem rgba(220, 53, 69, 0.2);
+    }
+}
+
+.context-menu {
+    position: absolute;
+    top: 1.5rem;
+    right: 0;
+    background: $color-white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    li {
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 14px;
+        &:hover {
+            background-color: #f1f1f1;
+        }
+        &:first-child {
+            border-bottom: 1px solid #eee;
+        }
+    }
+}
+
+.context-menu-container {
+    position: relative;
+    cursor: pointer;
+}

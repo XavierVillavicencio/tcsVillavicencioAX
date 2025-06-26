@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { GetAllProducts } from '../../core/use-cases/get-all-products';
 import { DeleteProductUseCase } from '../../core/use-cases/delete-product.usecase';
 import { ProductApiService } from '../../data/remote/product-api/product-api.service';
@@ -16,7 +16,7 @@ import { BehaviorSubject, combineLatest } from 'rxjs';
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
-  styleUrls: ['./product-list.component.scss'],
+  styleUrls: ['../../app.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -34,6 +34,7 @@ export class ProductListComponent implements OnInit {
   searchControl = new FormControl('');
   filteredCount = 0;
   itemsPerPage = 5;
+  openedMenuId: string | null = null;
 
   private products$ = new BehaviorSubject<ProductModel[]>([]);
   filteredProducts$!: Observable<ProductModel[]>;
@@ -112,4 +113,23 @@ export class ProductListComponent implements OnInit {
     }
     this.confirmingProduct = null;
   }
+
+  toggleMenu(productId: string) {
+    this.openedMenuId = this.openedMenuId === productId ? null : productId;
+  }
+
+  onMenuClick(event: MouseEvent): void {
+    event.stopPropagation();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+
+    // Si el clic NO ocurrió dentro de un elemento del menú, lo cerramos
+    if (!target.closest('.action-menu-cell')) {
+      this.openedMenuId = null;
+    }
+  }
+
 }
