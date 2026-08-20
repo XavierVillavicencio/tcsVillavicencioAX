@@ -1,0 +1,212 @@
+@model IReadOnlyList<FormField>
+@inject FormularioDinamico.Factories.FieldRendererFactory RendererFactory
+
+<main class="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
+    <section class="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <aside class="rounded-2xl border border-indigo-100 bg-white p-8 shadow-glow">
+            <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Demo MVC + Razor</p>
+            <h1 class="mt-3 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">Generador Dinamico de Formularios</h1>
+            <p class="mt-4 text-base leading-7 text-slate-600">
+                Renderizado desde JSON tipado, componentes Razor desacoplados y captura automatica con jQuery.
+            </p>
+
+            <div class="mt-8 grid gap-3 text-sm text-slate-600">
+                <div class="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                    <span class="font-semibold text-slate-950">Arquitectura limpia</span>
+                    <p class="mt-1">Dominio, factory y controller separados.</p>
+                </div>
+                <div class="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                    <span class="font-semibold text-slate-950">Docker ready</span>
+                    <p class="mt-1">Build multi-stage y compose en puerto 5000.</p>
+                </div>
+            </div>
+        </aside>
+
+        <section class="rounded-2xl border border-slate-100 bg-white p-8 shadow-xl">
+            <div class="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-indigo-600">Formulario activo</p>
+                    <h2 class="text-2xl font-bold text-slate-950">Registro dinamico</h2>
+                </div>
+                <span class="rounded-full bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700">@Model.Count campos</span>
+            </div>
+
+            <form id="dynamicForm" class="space-y-6" novalidate>
+                @foreach (var field in Model)
+                {
+                    <partial name="@RendererFactory.ResolvePartial(field)" model="field" />
+                }
+
+                <button type="submit" class="w-full rounded-xl bg-indigo-600 px-5 py-3 font-semibold text-white shadow-lg shadow-indigo-200 transition-all hover:bg-indigo-700 hover:shadow-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:ring-offset-2">
+                    Generar respuesta JSON
+                </button>
+            </form>
+
+            <pre id="jsonOutput" class="mt-6 hidden overflow-x-auto rounded-xl bg-slate-900 p-4 font-mono text-sm text-emerald-400"></pre>
+        </section>
+    </section>
+</main>
+
+@section Scripts {
+    <script>
+        $(function () {
+            const $form = $("#dynamicForm");
+            const $output = $("#jsonOutput");
+            const $conditionalBlocks = $(".conditional-block");
+
+            function clearAndDisable($block) {
+                $block.find(":input").each(function () {
+                    const $input = $(this);
+                    if ($input.is(":checkbox") || $input.is(":radio")) {
+                        $input.prop("checked", false);
+                    } else {
+                        $input.val("");
+                    }
+                    $input.prop("disabled", true);
+                });
+            }
+
+            function enableVisibleFields($block) {
+                $block.find(":input").each(function () {
+                    $(this).prop("disabled", false);
+                });
+            }
+
+            function syncConditionals() {
+                $conditionalBlocks.each(function () {
+                    const $block = $(this);
+                    const dependsOn = $block.data("depends-on");
+                    const dependsValue = String($block.data("depends-value") ?? "");
+                    const $source = $form.find(`[name="${dependsOn}"]`);
+                    let currentValue = "";
+
+                    if ($source.length) {
+                        const type = ($source.first().attr("type") || "").toLowerCase();
+                        if (type === "radio") {
+                            currentValue = $form.find(`[name="${dependsOn}"]:checked`).val() || "";
+                        } else if (type === "checkbox") {
+                            currentValue = $source.is(":checked") ? "true" : "false";
+                        } else {
+                            currentValue = $source.first().val() || "";
+                        }
+                    }
+
+                    const shouldShow = currentValue === dependsValue;
+                    $block.toggleClass("hidden", !shouldShow);
+
+                    if (shouldShow) {
+                        enableVisibleFields($block);
+                    } else {
+                        clearAndDisable($block);
+                    }
+                });
+            }
+
+            function serializeVisibleFields() {
+                const payload = {};
+
+                $form.find(":input[name]:enabled").each(function () {
+                    const $field = $(this);
+                    const name = $field.attr("name");
+                    const type = ($field.attr("type") || "").toLowerCase();
+                    const tag = ($field.prop("tagName") || "").toLowerCase();
+
+                    if (type === "radio") {
+                        if ($field.is(":checked")) {
+                            payload[name] = $field.val();
+                        }
+                        return;
+                    }
+
+                    if (type === "checkbox") {
+                        payload[name] = $field.is(":checked");
+                        return;
+                    }
+
+                    if (tag === "select") {
+                        payload[name] = $field.val();
+                        return;
+                    }
+
+                    payload[name] = $field.val();
+                });
+
+                return payload;
+            }
+
+            function validateVisibleFields() {
+                const missing = [];
+
+                $form.find(":input[name]:enabled[required]").each(function () {
+                    const $field = $(this);
+                    const name = $field.attr("name");
+                    const type = ($field.attr("type") || "").toLowerCase();
+                    const tag = ($field.prop("tagName") || "").toLowerCase();
+
+                    if (type === "checkbox") {
+                        if (!$field.is(":checked")) {
+                            missing.push(name);
+                        }
+                        return;
+                    }
+
+                    if (type === "radio") {
+                        if (!$form.find(`[name="${name}"]:checked`).length) {
+                            missing.push(name);
+                        }
+                        return;
+                    }
+
+                    if (tag === "select") {
+                        if (!$field.val()) {
+                            missing.push(name);
+                        }
+                        return;
+                    }
+
+                    if (!$field.val()) {
+                        missing.push(name);
+                    }
+                });
+
+                return [...new Set(missing)];
+            }
+
+            $form.on("change input", ":input", function () {
+                syncConditionals();
+                $output.removeClass("hidden").text(JSON.stringify({
+                    data: serializeVisibleFields(),
+                    validation: {
+                        ok: validateVisibleFields().length === 0,
+                        missing: validateVisibleFields()
+                    }
+                }, null, 2));
+            });
+
+            $form.on("submit", function (event) {
+                event.preventDefault();
+                syncConditionals();
+
+                const missing = validateVisibleFields();
+                const response = {
+                    data: serializeVisibleFields(),
+                    validation: {
+                        ok: missing.length === 0,
+                        missing
+                    }
+                };
+
+                $output.removeClass("hidden").text(JSON.stringify(response, null, 2));
+            });
+
+            syncConditionals();
+            $output.removeClass("hidden").text(JSON.stringify({
+                data: serializeVisibleFields(),
+                validation: {
+                    ok: true,
+                    missing: []
+                }
+            }, null, 2));
+        });
+    </script>
+}

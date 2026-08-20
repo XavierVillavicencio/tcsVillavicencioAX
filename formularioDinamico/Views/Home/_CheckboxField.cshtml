@@ -1,0 +1,10 @@
+@model FormField
+
+<label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 transition-all hover:border-indigo-300 hover:bg-indigo-50/50">
+    <input id="@Model.Id"
+           name="@Model.Id"
+           type="checkbox"
+           required="@Model.Required"
+           class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-200" />
+    <span class="text-sm font-semibold leading-6 text-slate-700">@Model.Label</span>
+</label>
